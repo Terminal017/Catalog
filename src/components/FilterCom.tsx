@@ -138,9 +138,10 @@ export function FilterProjects() {
         placement="bottom"
         open={open}
         onClose={() => setOpen(false)}
+        size={680}
       >
-        <h3>类别</h3>
-        <div>
+        <h3 className="text-xl">类别</h3>
+        <div className="grid grid-cols-3 gap-x-2 gap-y-3 mb-8">
           {CATEGORIES.map((tag) => {
             //从Redux中获取分类筛选条件以显示
             const isChecked = querySelector.category.includes(tag.value)
@@ -151,6 +152,13 @@ export function FilterProjects() {
                 onChange={(checked) =>
                   dispatch(setFilter(handleCategory(tag.value, checked)))
                 }
+                style={{
+                  fontSize: 16,
+                  padding: '6px 10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  border: '1px solid #d9d9d9',
+                }}
               >
                 {tag.label}
               </CheckableTag>
@@ -158,9 +166,13 @@ export function FilterProjects() {
           })}
         </div>
 
-        <h3>价格区间</h3>
-        <div>
+        <h3 className="text-xl">价格区间</h3>
+        <div className="flex flex-row gap-1 items-center mb-6">
           <InputNumber
+            styles={{
+              root: { width: '100%' },
+              input: { textAlign: 'center', fontSize: '16px' },
+            }}
             controls={false}
             placeholder="最低价"
             min={0}
@@ -172,6 +184,10 @@ export function FilterProjects() {
           />
           <span className="mx-2">-</span>
           <InputNumber
+            styles={{
+              root: { width: '100%' },
+              input: { textAlign: 'center', fontSize: '16px' },
+            }}
             controls={false}
             placeholder="最高价"
             min={0}
@@ -183,9 +199,13 @@ export function FilterProjects() {
           />
         </div>
 
-        <h3>销售量</h3>
-        <div>
+        <h3 className="text-xl">销售量</h3>
+        <div className="flex flex-row gap-1 items-center mb-6">
           <InputNumber
+            styles={{
+              root: { width: '100%' },
+              input: { textAlign: 'center', fontSize: '16px' },
+            }}
             controls={false}
             placeholder="最低销量"
             min={0}
@@ -199,6 +219,10 @@ export function FilterProjects() {
           />
           <span className="mx-2">-</span>
           <InputNumber
+            styles={{
+              root: { width: '100%' },
+              input: { textAlign: 'center', fontSize: '16px' },
+            }}
             controls={false}
             placeholder="最高销量"
             min={0}
@@ -212,9 +236,13 @@ export function FilterProjects() {
           />
         </div>
 
-        <h3>评分</h3>
-        <div>
+        <h3 className="text-xl">评分</h3>
+        <div className="flex flex-row gap-1 items-center mb-6">
           <InputNumber
+            styles={{
+              root: { width: '100%' },
+              input: { textAlign: 'center', fontSize: '16px' },
+            }}
             controls={false}
             placeholder="最低评分"
             min={0}
@@ -230,6 +258,10 @@ export function FilterProjects() {
           />
           <span className="mx-2">-</span>
           <InputNumber
+            styles={{
+              root: { width: '100%' },
+              input: { textAlign: 'center', fontSize: '16px' },
+            }}
             controls={false}
             placeholder="最高评分"
             min={0}
@@ -245,9 +277,35 @@ export function FilterProjects() {
           />
         </div>
 
-        <div className="flex flex-row justify-around">
-          <Button onClick={() => handleReset()}>清空筛选</Button>
-          <Button onClick={() => setOpen(false)}>确认</Button>
+        <div className="flex flex-row gap-4 justify-around mt-12">
+          <Button
+            styles={{
+              root: {
+                width: '100%',
+                fontSize: '18px',
+                paddingBlock: '20px',
+              },
+            }}
+            color="primary"
+            variant="filled"
+            onClick={() => handleReset()}
+          >
+            清空筛选
+          </Button>
+          <Button
+            styles={{
+              root: {
+                width: '100%',
+                fontSize: '18px',
+                paddingBlock: '20px',
+              },
+            }}
+            color="primary"
+            variant="filled"
+            onClick={() => setOpen(false)}
+          >
+            确认
+          </Button>
         </div>
       </Drawer>
     </>
