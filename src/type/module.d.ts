@@ -17,3 +17,11 @@ interface querySelectorType {
   salesRange: { min: number | null; max: number | null }
   ratingRange: { min: number | null; max: number | null }
 }
+
+type sortOptionType =
+  | 'price-asc'
+  | 'price-desc'
+  | 'sales'
+  | 'rating'
+  | 'createdAt'
+  | 'default'

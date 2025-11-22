@@ -1,4 +1,4 @@
-export function filterProjects(
+function filterProject(
   data: ProductItemType[],
   querySelector: querySelectorType,
 ): ProductItemType[] {
@@ -33,4 +33,37 @@ export function filterProjects(
 
     return true
   })
+}
+
+function sortProject(data: ProductItemType[], sortOption: sortOptionType) {
+  const arr = [...data]
+  switch (sortOption) {
+    case 'default':
+      return arr
+    case 'createdAt':
+      return arr.sort(
+        (a, b) =>
+          new Date(b.createAt).getTime() - new Date(a.createAt).getTime(),
+      )
+    case 'rating':
+      return arr.sort((a, b) => b.rating - a.rating)
+    case 'price-asc':
+      return arr.sort((a, b) => a.price - b.price)
+    case 'price-desc':
+      return arr.sort((a, b) => b.price - a.price)
+    case 'sales':
+      return arr.sort((a, b) => b.sales - a.sales)
+    default:
+      return arr
+  }
+}
+
+export function filterAll(
+  data: ProductItemType[],
+  querySelector: querySelectorType,
+  sortOption: sortOptionType,
+) {
+  const filtered = filterProject(data, querySelector)
+  const sorted = sortProject(filtered, sortOption)
+  return sorted
 }

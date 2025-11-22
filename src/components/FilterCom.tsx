@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '../app/hook'
 import { setFilter, resetFilter } from '../features/getProduct'
 
 //筛选组件
-export function FilterComponent() {
+export function FilterProjects() {
   const querySelector = useAppSelector((state) => state.products.querySelector)
   const dispatch = useAppDispatch()
 

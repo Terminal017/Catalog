@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit'
-import { filterProjects } from '../lib/filter'
+import { filterAll } from '../lib/filter'
 
 export const createAppSlice = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -19,10 +19,12 @@ export const productsSlice = createAppSlice({
       salesRange: { min: null, max: null }, // 范围 0-100000
       ratingRange: { min: null, max: null }, // 范围 0-5
     },
+    sortOption: 'default',
   } as {
-    products: any[]
+    products: ProductItemType[]
     loading: boolean
     querySelector: querySelectorType
+    sortOption: sortOptionType
   },
 
   reducers: (create) => ({
@@ -43,6 +45,12 @@ export const productsSlice = createAppSlice({
         ratingRange: { min: null, max: null },
       }
     }),
+
+    //设置排序条件
+    setSortOption: create.reducer<sortOptionType>((state, action) => {
+      state.sortOption = action.payload
+    }),
+
     // 异步获取商品列表
     fetchProducts: create.asyncThunk(
       async () => {
@@ -59,7 +67,11 @@ export const productsSlice = createAppSlice({
         fulfilled: (state, action) => {
           state.loading = false
           // 执行筛选
-          state.products = filterProjects(action.payload, state.querySelector)
+          state.products = filterAll(
+            action.payload,
+            state.querySelector,
+            state.sortOption,
+          )
         },
 
         rejected: (state) => {
@@ -71,6 +83,7 @@ export const productsSlice = createAppSlice({
 })
 
 // 导出 Actions 和 redecer
-export const { fetchProducts, setFilter, resetFilter } = productsSlice.actions
+export const { fetchProducts, setFilter, resetFilter, setSortOption } =
+  productsSlice.actions
 
 export default productsSlice.reducer
