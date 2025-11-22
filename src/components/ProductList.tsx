@@ -41,11 +41,12 @@ function Productitem({ data }: { data: ProductItemType }) {
   return (
     <div
       className="flex flex-row gap-4 border-[1.5px] border-transparent 
-     rounded-lg hover:border-blue-300 hover:scale-101 bg-gray-50 p-2
+     rounded-lg hover:border-blue-300 hover:scale-101 bg-gray-50 p-3
      hover:shadow-lg transition-all duration-200 ease-out"
     >
       <Image
-        width={125}
+        width={120}
+        height={120}
         src={data.image}
         alt={data.name}
         className="rounded-md"

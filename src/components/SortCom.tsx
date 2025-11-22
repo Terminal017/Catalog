@@ -34,7 +34,11 @@ export function SortProjects() {
         trigger={['click']}
         placement="bottomLeft"
       >
-        <Button className="min-w-28">
+        <Button
+          className="min-w-28"
+          color={sortOption !== 'sales' ? 'primary' : 'default'}
+          variant="filled"
+        >
           {menus.find((m) => m.key === currentKey)?.label ?? '综合排序'}
           <DownOutlined />
         </Button>
@@ -55,6 +59,8 @@ export function SortBySales() {
           dispatch(setSortOption('sales'))
         }
       }}
+      color={sortOption === 'sales' ? 'primary' : 'default'}
+      variant="filled"
     >
       销量
     </Button>

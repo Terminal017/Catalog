@@ -13,9 +13,15 @@ export default function PagingCom() {
   const dispatch = useAppDispatch()
 
   return (
-    <>
+    <div className="flex flex-row justify-center">
       <ConfigProvider locale={zhCN}>
         <Pagination
+          styles={{
+            root: {
+              marginTop: '24px',
+              marginBottom: '32px',
+            },
+          }}
           total={total}
           current={currentPage}
           pageSize={pageSize}
@@ -31,6 +37,6 @@ export default function PagingCom() {
           }}
         />
       </ConfigProvider>
-    </>
+    </div>
   )
 }

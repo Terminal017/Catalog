@@ -131,7 +131,9 @@ export function FilterProjects() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>筛选</Button>
+      <Button onClick={() => setOpen(true)} color="default" variant="filled">
+        筛选
+      </Button>
 
       <Drawer
         title="筛选条件"
