@@ -3,17 +3,6 @@ import { useAppDispatch, useAppSelector } from '../app/hook'
 import { useEffect } from 'react'
 import { fetchProducts } from '../features/getProduct'
 
-interface ProductItemType {
-  id: string
-  name: string
-  image: string
-  price: number
-  sales: number
-  category: string
-  rating: number
-  createAt: string
-}
-
 //商品列表组件
 export default function ProductList() {
   //从redux中获取商品数据

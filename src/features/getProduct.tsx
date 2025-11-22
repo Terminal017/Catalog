@@ -6,13 +6,6 @@ export const createAppSlice = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
 })
 
-interface querySelectorType {
-  category: string[]
-  priceRange: { min: number | null; max: number | null }
-  salesRange: { min: number | null; max: number | null }
-  ratingRange: { min: number | null; max: number | null }
-}
-
 //创建关联商品的切片
 export const productsSlice = createAppSlice({
   name: 'products',
