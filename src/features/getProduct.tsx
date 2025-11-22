@@ -1,9 +1,17 @@
 import axios from 'axios'
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit'
+import { filterProjects } from '../lib/filter'
 
 export const createAppSlice = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
 })
+
+interface querySelectorType {
+  category: string[]
+  priceRange: { min: number | null; max: number | null }
+  salesRange: { min: number | null; max: number | null }
+  ratingRange: { min: number | null; max: number | null }
+}
 
 //创建关联商品的切片
 export const productsSlice = createAppSlice({
@@ -11,12 +19,37 @@ export const productsSlice = createAppSlice({
   initialState: {
     products: [],
     loading: false,
+    querySelector: {
+      //筛选条件：分类，价格区间，销量区间，评分区间
+      category: [],
+      priceRange: { min: null, max: null }, // 范围 0-10000
+      salesRange: { min: null, max: null }, // 范围 0-100000
+      ratingRange: { min: null, max: null }, // 范围 0-5
+    },
   } as {
     products: any[]
     loading: boolean
+    querySelector: querySelectorType
   },
 
   reducers: (create) => ({
+    // 设置筛选条件
+    setFilter: create.reducer<Partial<querySelectorType>>((state, action) => {
+      state.querySelector = {
+        ...state.querySelector,
+        ...action.payload,
+      }
+    }),
+
+    // 重置所有筛选
+    resetFilter: create.reducer((state) => {
+      state.querySelector = {
+        category: [],
+        priceRange: { min: null, max: null },
+        salesRange: { min: null, max: null },
+        ratingRange: { min: null, max: null },
+      }
+    }),
     // 异步获取商品列表
     fetchProducts: create.asyncThunk(
       async () => {
@@ -32,7 +65,8 @@ export const productsSlice = createAppSlice({
 
         fulfilled: (state, action) => {
           state.loading = false
-          state.products = action.payload
+          // 执行筛选
+          state.products = filterProjects(action.payload, state.querySelector)
         },
 
         rejected: (state) => {
@@ -44,6 +78,6 @@ export const productsSlice = createAppSlice({
 })
 
 // 导出 Actions 和 redecer
-export const { fetchProducts } = productsSlice.actions
+export const { fetchProducts, setFilter, resetFilter } = productsSlice.actions
 
 export default productsSlice.reducer

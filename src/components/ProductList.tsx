@@ -1,7 +1,7 @@
 import { Row, Col, Image } from 'antd'
-import { useSelector, useDispatch } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '../app/hook'
+import { useEffect } from 'react'
 import { fetchProducts } from '../features/getProduct'
-import type { AppDispatch } from '../app/store'
 
 interface ProductItemType {
   id: string
@@ -17,12 +17,19 @@ interface ProductItemType {
 //商品列表组件
 export default function ProductList() {
   //从redux中获取商品数据
-  const products = useSelector<{ products: any }>(
+  const products = useAppSelector(
     (state) => state.products.products,
   ) as ProductItemType[]
 
+  const querySelector = useAppSelector((state) => state.products.querySelector)
+
   //为useDispatch添加类型定义
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
+
+  //根据query变化重新获取商品列表
+  useEffect(() => {
+    dispatch(fetchProducts())
+  }, [querySelector])
 
   return (
     <>
@@ -35,7 +42,6 @@ export default function ProductList() {
           )
         })}
       </Row>
-      <button onClick={() => dispatch(fetchProducts())}>重新获取</button>
     </>
   )
 }
