@@ -1,4 +1,4 @@
-import { Row, Col, Image } from 'antd'
+import { Row, Col, Image, Skeleton } from 'antd'
 import { useAppDispatch, useAppSelector } from '../app/hook'
 import { useEffect } from 'react'
 import { fetchProducts } from '../features/getProduct'
@@ -13,6 +13,7 @@ export default function ProductList() {
   const querySelector = useAppSelector((state) => state.products.querySelector)
   const sortOption = useAppSelector((state) => state.products.sortOption)
   const pageOption = useAppSelector((state) => state.products.pageOption)
+  const loading = useAppSelector((state) => state.products.loading)
   //为useDispatch添加类型定义
   const dispatch = useAppDispatch()
 
@@ -24,13 +25,21 @@ export default function ProductList() {
   return (
     <>
       <Row gutter={[16, 16]}>
-        {products.map((item) => {
-          return (
-            <Col span={24} key={item.id}>
-              <Productitem data={item} />
-            </Col>
-          )
-        })}
+        {loading
+          ? Array.from({ length: pageOption.pageSize }).map((_, index) => {
+              return (
+                <Col span={24} key={index}>
+                  <SkeletonCard />
+                </Col>
+              )
+            })
+          : products.map((item) => {
+              return (
+                <Col span={24} key={item.id}>
+                  <Productitem data={item} />
+                </Col>
+              )
+            })}
       </Row>
     </>
   )
@@ -56,6 +65,24 @@ function Productitem({ data }: { data: ProductItemType }) {
         <p className="text-red-500 text-[1.1rem] mb-0!">{`¥${data.price}`}</p>
         <p className="mb-0! text-base text-gray-400">{`已售${data.sales}件`}</p>
         <p className="mb-0! text-base text-gray-400">{`综合评分：${data.rating}`}</p>
+      </div>
+    </div>
+  )
+}
+
+function SkeletonCard() {
+  return (
+    <div className="flex gap-4 rounded-lg bg-gray-50 p-3">
+      <Skeleton.Image
+        active
+        style={{ width: 120, height: 120, borderRadius: 8 }}
+      />
+      <div className="flex-1 flex flex-col justify-center">
+        <Skeleton
+          active
+          title={{ width: '60%' }}
+          paragraph={{ rows: 3, width: ['40%', '48%', '55%'] }}
+        />
       </div>
     </div>
   )
