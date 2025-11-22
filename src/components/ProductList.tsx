@@ -12,13 +12,14 @@ export default function ProductList() {
 
   const querySelector = useAppSelector((state) => state.products.querySelector)
   const sortOption = useAppSelector((state) => state.products.sortOption)
+  const pageOption = useAppSelector((state) => state.products.pageOption)
   //为useDispatch添加类型定义
   const dispatch = useAppDispatch()
 
   //根据query变化重新获取商品列表
   useEffect(() => {
     dispatch(fetchProducts())
-  }, [querySelector, sortOption])
+  }, [querySelector, sortOption, pageOption])
 
   return (
     <>

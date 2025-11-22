@@ -25,3 +25,8 @@ type sortOptionType =
   | 'rating'
   | 'createdAt'
   | 'default'
+
+interface PaginateOptionType {
+  currentPage: number
+  pageSize: number
+}

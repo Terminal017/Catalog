@@ -44,6 +44,19 @@ export function SortProjects() {
 }
 
 export function SortBySales() {
+  const sortOption = useAppSelector((state) => state.products.sortOption)
   const dispatch = useAppDispatch()
-  return <Button onClick={() => dispatch(setSortOption('sales'))}>销量</Button>
+  return (
+    <Button
+      onClick={() => {
+        if (sortOption === 'sales') {
+          dispatch(setSortOption('default'))
+        } else {
+          dispatch(setSortOption('sales'))
+        }
+      }}
+    >
+      销量
+    </Button>
+  )
 }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit'
-import { filterAll } from '../lib/filter'
+import { filterProject, sortProject, paginateProject } from '../lib/filter'
 
 export const createAppSlice = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -10,7 +10,8 @@ export const createAppSlice = buildCreateSlice({
 export const productsSlice = createAppSlice({
   name: 'products',
   initialState: {
-    products: [],
+    products: [], //当前页数据
+    total: 0, //商品总数
     loading: false,
     querySelector: {
       //筛选条件：分类，价格区间，销量区间，评分区间
@@ -20,11 +21,17 @@ export const productsSlice = createAppSlice({
       ratingRange: { min: null, max: null }, // 范围 0-5
     },
     sortOption: 'default',
+    pageOption: {
+      currentPage: 1,
+      pageSize: 10,
+    },
   } as {
     products: ProductItemType[]
+    total: number
     loading: boolean
     querySelector: querySelectorType
     sortOption: sortOptionType
+    pageOption: PaginateOptionType
   },
 
   reducers: (create) => ({
@@ -34,6 +41,7 @@ export const productsSlice = createAppSlice({
         ...state.querySelector,
         ...action.payload,
       }
+      state.pageOption.currentPage = 1 //筛选时重置页面
     }),
 
     // 重置所有筛选
@@ -49,6 +57,16 @@ export const productsSlice = createAppSlice({
     //设置排序条件
     setSortOption: create.reducer<sortOptionType>((state, action) => {
       state.sortOption = action.payload
+    }),
+
+    // 设置分页选项
+    setPageOption: create.reducer<
+      Partial<{ currentPage: number; pageSize: number }>
+    >((state, action) => {
+      state.pageOption = {
+        ...state.pageOption,
+        ...action.payload,
+      }
     }),
 
     // 异步获取商品列表
@@ -67,11 +85,15 @@ export const productsSlice = createAppSlice({
         fulfilled: (state, action) => {
           state.loading = false
           // 执行筛选
-          state.products = filterAll(
-            action.payload,
-            state.querySelector,
-            state.sortOption,
-          )
+          const filtered = filterProject(action.payload, state.querySelector)
+          // 添加总数
+          state.total = filtered.length
+          // 执行排序
+          const sorted = sortProject(filtered, state.sortOption)
+
+          const result = paginateProject(sorted, state.pageOption)
+
+          state.products = result
         },
 
         rejected: (state) => {
@@ -83,7 +105,12 @@ export const productsSlice = createAppSlice({
 })
 
 // 导出 Actions 和 redecer
-export const { fetchProducts, setFilter, resetFilter, setSortOption } =
-  productsSlice.actions
+export const {
+  fetchProducts,
+  setFilter,
+  resetFilter,
+  setSortOption,
+  setPageOption,
+} = productsSlice.actions
 
 export default productsSlice.reducer

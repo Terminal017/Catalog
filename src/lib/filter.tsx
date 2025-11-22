@@ -1,4 +1,4 @@
-function filterProject(
+export function filterProject(
   data: ProductItemType[],
   querySelector: querySelectorType,
 ): ProductItemType[] {
@@ -35,7 +35,10 @@ function filterProject(
   })
 }
 
-function sortProject(data: ProductItemType[], sortOption: sortOptionType) {
+export function sortProject(
+  data: ProductItemType[],
+  sortOption: sortOptionType,
+) {
   const arr = [...data]
   switch (sortOption) {
     case 'default':
@@ -58,12 +61,14 @@ function sortProject(data: ProductItemType[], sortOption: sortOptionType) {
   }
 }
 
-export function filterAll(
+export function paginateProject(
   data: ProductItemType[],
-  querySelector: querySelectorType,
-  sortOption: sortOptionType,
+  pageOption: PaginateOptionType,
 ) {
-  const filtered = filterProject(data, querySelector)
-  const sorted = sortProject(filtered, sortOption)
-  return sorted
+  const { currentPage, pageSize } = pageOption
+  const result = data.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  )
+  return result
 }
