@@ -1,7 +1,9 @@
 import { Row, Col, Image, Skeleton } from 'antd'
 import { useAppDispatch, useAppSelector } from '../app/hook'
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { fetchProducts } from '../features/getProduct'
+import { AutoSizer, Grid } from 'react-virtualized'
+import type { GridCellProps } from 'react-virtualized'
 
 //商品列表组件
 export default function ProductList() {
@@ -17,32 +19,76 @@ export default function ProductList() {
   //为useDispatch添加类型定义
   const dispatch = useAppDispatch()
 
+  //虚拟滚动触发数量
+  const VIRTUAL_THRESHOLD = 20
+
   //根据query变化重新获取商品列表
   useEffect(() => {
     dispatch(fetchProducts())
   }, [querySelector, sortOption, pageOption])
 
-  return (
-    <>
+  if (loading) {
+    return (
       <Row gutter={[16, 16]} style={{ marginTop: 16, marginInline: 0 }}>
-        {loading
-          ? Array.from({ length: pageOption.pageSize }).map((_, index) => {
-              return (
-                <Col span={24} key={index}>
-                  <SkeletonCard />
-                </Col>
-              )
-            })
-          : products.map((item) => {
-              return (
-                <Col span={24} key={item.id}>
-                  <Productitem data={item} />
-                </Col>
-              )
-            })}
+        {Array.from({ length: Math.min(pageOption.pageSize, 20) }).map(
+          (_, index) => {
+            return (
+              <Col span={24} key={index}>
+                <SkeletonCard />
+              </Col>
+            )
+          },
+        )}
       </Row>
-    </>
-  )
+    )
+  } else {
+    if (products.length <= VIRTUAL_THRESHOLD) {
+      return (
+        <Row gutter={[16, 16]} style={{ marginTop: 16, marginInline: 0 }}>
+          {products.map((item) => {
+            return (
+              <Col span={24} key={item.id}>
+                <Productitem data={item} />
+              </Col>
+            )
+          })}
+        </Row>
+      )
+    } else {
+      //虚拟滚动列表
+      return (
+        <div style={{ height: 'calc(100vh - 226px)', marginTop: 16 }}>
+          <AutoSizer>
+            {({ width, height }) => {
+              const columnCount = 1 // 计算总列数，移动端为1行
+              const rowCount = products.length // 计算总行数
+
+              return (
+                <Grid
+                  width={width}
+                  height={height}
+                  columnCount={columnCount}
+                  columnWidth={width} // 一列占满全部宽度
+                  rowCount={rowCount}
+                  rowHeight={160} // 固定行高
+                  cellRenderer={({ rowIndex, columnIndex, key, style }) => {
+                    const item = products[rowIndex]
+                    if (!item) return null
+
+                    return (
+                      <div key={key} style={style}>
+                        <Productitem data={item} />
+                      </div>
+                    )
+                  }}
+                />
+              )
+            }}
+          </AutoSizer>
+        </div>
+      )
+    }
+  }
 }
 
 //单个商品组件

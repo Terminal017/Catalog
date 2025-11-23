@@ -25,6 +25,7 @@ export default function PagingCom() {
           total={total}
           current={currentPage}
           pageSize={pageSize}
+          pageSizeOptions={['10', '20', '50', '100', '1000']}
           showSizeChanger
           showQuickJumper
           onChange={(page) => {
