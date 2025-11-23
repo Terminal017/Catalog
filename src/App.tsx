@@ -4,6 +4,7 @@ import FilterBar from './components/FilterBar'
 import ProductList from './components/ProductList'
 import PagingCom from './components/PagingCom'
 import SearchCom from './components/SearchCom'
+import RecommendCom from './components/Recommend.tsx'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <main className="flex flex-col">
           <SearchCom />
           <FilterBar />
+          <RecommendCom />
           <ProductList />
         </main>
         <PagingCom />

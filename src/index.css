@@ -10,3 +10,19 @@ html {
   background-color: #0d0d0d;
   color: #f1f1f1;
 }
+
+/*滚动条颜色修改*/
+/* 激活的滚动条 */
+.ant-carousel .slick-dots li.slick-active::after {
+  background: #1890ff;
+}
+
+/* 未激活的滚动条 */
+.ant-carousel .slick-dots li > button {
+  background: #1890ff;
+}
+
+/* 取消滚动条初次启动的动画效果，避免影响样式 */
+.slick-dots li button:before {
+  transition: none;
+}

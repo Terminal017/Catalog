@@ -1,9 +1,8 @@
 import { Row, Col, Image, Skeleton } from 'antd'
 import { useAppDispatch, useAppSelector } from '../app/hook'
-import { useEffect, useCallback } from 'react'
+import { useEffect } from 'react'
 import { fetchProducts } from '../features/getProduct'
 import { AutoSizer, Grid } from 'react-virtualized'
-import type { GridCellProps } from 'react-virtualized'
 
 //商品列表组件
 export default function ProductList() {
@@ -29,30 +28,36 @@ export default function ProductList() {
 
   if (loading) {
     return (
-      <Row gutter={[16, 16]} style={{ marginTop: 16, marginInline: 0 }}>
-        {Array.from({ length: Math.min(pageOption.pageSize, 20) }).map(
-          (_, index) => {
-            return (
-              <Col span={24} key={index}>
-                <SkeletonCard />
-              </Col>
-            )
-          },
-        )}
-      </Row>
+      <div className="px-2">
+        <h3 className="text-xl">全部商品</h3>
+        <Row gutter={[16, 16]} style={{ marginTop: 16, marginInline: 0 }}>
+          {Array.from({ length: Math.min(pageOption.pageSize, 20) }).map(
+            (_, index) => {
+              return (
+                <Col span={24} key={index}>
+                  <SkeletonCard />
+                </Col>
+              )
+            },
+          )}
+        </Row>
+      </div>
     )
   } else {
     if (products.length <= VIRTUAL_THRESHOLD) {
       return (
-        <Row gutter={[16, 16]} style={{ marginTop: 16, marginInline: 0 }}>
-          {products.map((item) => {
-            return (
-              <Col span={24} key={item.id}>
-                <Productitem data={item} />
-              </Col>
-            )
-          })}
-        </Row>
+        <>
+          <h3 className="text-xl mx-2 mb-0!">全部商品</h3>
+          <Row gutter={[16, 16]} style={{ marginTop: 16, marginInline: 0 }}>
+            {products.map((item) => {
+              return (
+                <Col span={24} key={item.id}>
+                  <Productitem data={item} />
+                </Col>
+              )
+            })}
+          </Row>
+        </>
       )
     } else {
       //虚拟滚动列表

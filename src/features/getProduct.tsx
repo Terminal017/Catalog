@@ -11,6 +11,7 @@ export const productsSlice = createAppSlice({
   name: 'products',
   initialState: {
     products: [], //当前页数据
+    recommendProducts: [], //推荐商品数据
     total: 0, //商品总数
     loading: false,
     querySelector: {
@@ -28,6 +29,7 @@ export const productsSlice = createAppSlice({
     },
   } as {
     products: ProductItemType[]
+    recommendProducts: ProductItemType[]
     total: number
     loading: boolean
     querySelector: querySelectorType
@@ -76,7 +78,7 @@ export const productsSlice = createAppSlice({
       async () => {
         const res = await axios.get('/api/products')
         console.log('获取到新的数据/=-=/')
-        return res.data.data
+        return res.data.data as ProductItemType[]
       },
       //获取fetch商品信息的状态
       {
@@ -86,6 +88,23 @@ export const productsSlice = createAppSlice({
 
         fulfilled: (state, action) => {
           state.loading = false
+          // 仅更新一次推荐数据
+          if (state.recommendProducts.length === 0) {
+            const excellent = action.payload.filter(
+              (item) => item.rating >= 4 && item.sales >= 50000,
+            )
+            if (excellent.length >= 5) {
+              // 随机选5个优秀商品作为推荐
+              for (let i = 0; i < 5; i++) {
+                const j = i + Math.floor(Math.random() * (excellent.length - i))
+                ;[excellent[i], excellent[j]] = [excellent[j], excellent[i]]
+              }
+              state.recommendProducts = excellent.slice(0, 5)
+            } else {
+              state.recommendProducts = action.payload.slice(0, 5)
+            }
+          }
+
           // 执行筛选
           const filtered = filterProject(action.payload, state.querySelector)
           // 添加总数
