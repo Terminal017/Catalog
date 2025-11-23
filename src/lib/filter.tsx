@@ -18,6 +18,8 @@ export function filterProject(
     return value <= (max as number)
   }
 
+  console.log('检查数据：', querySelector.keyword.trim())
+
   return data.filter((item) => {
     // 类别筛选
     if (
@@ -31,7 +33,13 @@ export function filterProject(
     if (!inRange(item.sales, querySelector.salesRange)) return false
     if (!inRange(item.rating, querySelector.ratingRange)) return false
 
-    return true
+    // 关键字筛选
+    const keyword = querySelector.keyword.trim()
+    if (keyword) {
+      return item.name.includes(keyword)
+    } else {
+      return true
+    }
   })
 }
 

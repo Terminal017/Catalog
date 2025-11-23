@@ -19,6 +19,7 @@ export const productsSlice = createAppSlice({
       priceRange: { min: null, max: null }, // 范围 0-10000
       salesRange: { min: null, max: null }, // 范围 0-100000
       ratingRange: { min: null, max: null }, // 范围 0-5
+      keyword: '',
     },
     sortOption: 'default',
     pageOption: {
@@ -51,6 +52,7 @@ export const productsSlice = createAppSlice({
         priceRange: { min: null, max: null },
         salesRange: { min: null, max: null },
         ratingRange: { min: null, max: null },
+        keyword: state.querySelector.keyword, //暂不清理关键字搜索
       }
     }),
 

@@ -16,6 +16,7 @@ interface querySelectorType {
   priceRange: { min: number | null; max: number | null }
   salesRange: { min: number | null; max: number | null }
   ratingRange: { min: number | null; max: number | null }
+  keyword: string
 }
 
 type sortOptionType =
