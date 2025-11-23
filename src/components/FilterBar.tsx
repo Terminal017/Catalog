@@ -1,6 +1,7 @@
 import { FilterProjects } from './FilterCom'
 import { SortProjects } from './SortCom'
 import { SortBySales } from './SortCom'
+import Bookmarks from './Bookmarks'
 
 export default function FilterBar() {
   return (
@@ -9,6 +10,7 @@ export default function FilterBar() {
         <SortProjects />
         <SortBySales />
         <FilterProjects />
+        <Bookmarks />
       </div>
     </>
   )

@@ -60,6 +60,7 @@ export const productsSlice = createAppSlice({
   initialState: {
     products: [], //当前页数据
     recommendProducts: [], //推荐商品数据
+    bookmarks: [], //收藏商品数据
     total: 0, //商品总数
     loading: false,
     querySelector: queryOptions.querySelector,
@@ -68,6 +69,7 @@ export const productsSlice = createAppSlice({
   } as {
     products: ProductItemType[]
     recommendProducts: ProductItemType[]
+    bookmarks: string[]
     total: number
     loading: boolean
     querySelector: querySelectorType
@@ -109,6 +111,14 @@ export const productsSlice = createAppSlice({
         ...state.pageOption,
         ...action.payload,
       }
+    }),
+
+    // 添加收藏方法
+    setbookmarks: create.reducer<string>((state, action) => {
+      const data: string = action.payload
+      state.bookmarks = state.bookmarks.includes(data)
+        ? state.bookmarks.filter((item) => item !== data)
+        : [...state.bookmarks, data]
     }),
 
     // 异步获取商品列表
@@ -180,6 +190,7 @@ export const {
   resetFilter,
   setSortOption,
   setPageOption,
+  setbookmarks,
 } = productsSlice.actions
 
 export default productsSlice.reducer

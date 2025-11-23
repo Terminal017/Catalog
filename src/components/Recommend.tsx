@@ -1,7 +1,12 @@
-import { Carousel, Image, Skeleton } from 'antd'
-import { useAppSelector } from '../app/hook'
+import { Carousel, Image, Skeleton, Button } from 'antd'
+import { useAppSelector, useAppDispatch } from '../app/hook'
+import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
+import { setbookmarks } from '../features/getProduct'
 
 export default function RecommendCom() {
+  const dispatch = useAppDispatch()
+  const bookmarks = useAppSelector((state) => state.products.bookmarks)
+
   // 获取推荐商品数据
   const recommendProducts = useAppSelector(
     (state) => state.products.recommendProducts,
@@ -29,7 +34,7 @@ export default function RecommendCom() {
           recommendProducts.map((item) => {
             return (
               <div>
-                <div className="flex flex-row gap-4 rounded-lg p-3">
+                <div className="flex flex-row gap-4 rounded-lg p-3 relative">
                   <Image
                     width={120}
                     height={120}
@@ -43,6 +48,27 @@ export default function RecommendCom() {
                     <p className="mb-0! text-base text-gray-400">{`已售${item.sales}件`}</p>
                     <p className="mb-0! text-base text-gray-400">{`综合评分：${item.rating}`}</p>
                   </div>
+                  <Button
+                    icon={
+                      bookmarks.includes(item.id) ? (
+                        <MinusOutlined />
+                      ) : (
+                        <PlusOutlined />
+                      )
+                    }
+                    color="primary"
+                    variant="filled"
+                    styles={{
+                      root: {
+                        position: 'absolute',
+                        bottom: 12,
+                        right: 0,
+                      },
+                    }}
+                    onClick={() => {
+                      dispatch(setbookmarks(item.id))
+                    }}
+                  ></Button>
                 </div>
               </div>
             )

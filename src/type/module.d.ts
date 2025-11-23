@@ -19,6 +19,7 @@ interface querySelectorType {
   keyword: string
 }
 
+// 商品排序参数类型
 type sortOptionType =
   | 'price-asc'
   | 'price-desc'
@@ -27,6 +28,7 @@ type sortOptionType =
   | 'createdAt'
   | 'default'
 
+// 分页参数类型
 interface PaginateOptionType {
   currentPage: number
   pageSize: number

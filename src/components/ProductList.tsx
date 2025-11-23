@@ -1,8 +1,9 @@
-import { Row, Col, Image, Skeleton } from 'antd'
+import { Row, Col, Image, Skeleton, Button } from 'antd'
 import { useAppDispatch, useAppSelector } from '../app/hook'
 import { useEffect } from 'react'
-import { fetchProducts } from '../features/getProduct'
+import { fetchProducts, setbookmarks } from '../features/getProduct'
 import { AutoSizer, Grid } from 'react-virtualized'
+import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 
 //商品列表组件
 export default function ProductList() {
@@ -26,6 +27,7 @@ export default function ProductList() {
     dispatch(fetchProducts())
   }, [querySelector, sortOption, pageOption])
 
+  //加载状态显示骨架
   if (loading) {
     return (
       <div className="px-2">
@@ -45,6 +47,7 @@ export default function ProductList() {
     )
   } else {
     if (products.length <= VIRTUAL_THRESHOLD) {
+      //正常列表
       return (
         <>
           <h3 className="text-xl mx-2 mb-0!">全部商品</h3>
@@ -62,35 +65,10 @@ export default function ProductList() {
     } else {
       //虚拟滚动列表
       return (
-        <div style={{ height: 'calc(100vh - 226px)', marginTop: 16 }}>
-          <AutoSizer>
-            {({ width, height }) => {
-              const columnCount = 1 // 计算总列数，移动端为1行
-              const rowCount = products.length // 计算总行数
-
-              return (
-                <Grid
-                  width={width}
-                  height={height}
-                  columnCount={columnCount}
-                  columnWidth={width} // 一列占满全部宽度
-                  rowCount={rowCount}
-                  rowHeight={160} // 固定行高
-                  cellRenderer={({ rowIndex, columnIndex, key, style }) => {
-                    const item = products[rowIndex]
-                    if (!item) return null
-
-                    return (
-                      <div key={key} style={style}>
-                        <Productitem data={item} />
-                      </div>
-                    )
-                  }}
-                />
-              )
-            }}
-          </AutoSizer>
-        </div>
+        <>
+          <h3 className="text-xl mx-2 mb-0!">全部商品</h3>
+          <VirtualList />
+        </>
       )
     }
   }
@@ -98,11 +76,13 @@ export default function ProductList() {
 
 //单个商品组件
 function Productitem({ data }: { data: ProductItemType }) {
+  const dispatch = useAppDispatch()
+  const bookmarks = useAppSelector((state) => state.products.bookmarks)
   return (
     <div
       className="flex flex-row gap-4 border-[1.5px] border-transparent 
      rounded-lg hover:border-blue-300 hover:scale-101 bg-gray-50 p-3
-     hover:shadow-lg transition-all duration-200 ease-out"
+     hover:shadow-lg transition-all duration-200 ease-out relative"
     >
       <Image
         width={120}
@@ -117,6 +97,23 @@ function Productitem({ data }: { data: ProductItemType }) {
         <p className="mb-0! text-base text-gray-400">{`已售${data.sales}件`}</p>
         <p className="mb-0! text-base text-gray-400">{`综合评分：${data.rating}`}</p>
       </div>
+      <Button
+        icon={
+          bookmarks.includes(data.id) ? <MinusOutlined /> : <PlusOutlined />
+        }
+        color="primary"
+        variant="filled"
+        styles={{
+          root: {
+            position: 'absolute',
+            bottom: 12,
+            right: 24,
+          },
+        }}
+        onClick={() => {
+          dispatch(setbookmarks(data.id))
+        }}
+      ></Button>
     </div>
   )
 }
@@ -135,6 +132,42 @@ function SkeletonCard() {
           paragraph={{ rows: 3, width: ['40%', '48%', '55%'] }}
         />
       </div>
+    </div>
+  )
+}
+
+function VirtualList() {
+  const products = useAppSelector(
+    (state) => state.products.products,
+  ) as ProductItemType[]
+
+  return (
+    <div style={{ height: 'calc(100vh - 226px)', marginTop: 16 }}>
+      <AutoSizer>
+        {({ width, height }) => {
+          const columnCount = 1 // 计算总列数，移动端为1行
+          const rowCount = products.length // 计算总行数
+          return (
+            <Grid
+              width={width}
+              height={height}
+              columnCount={columnCount}
+              columnWidth={width} // 一列占满全部宽度
+              rowCount={rowCount}
+              rowHeight={160} // 固定行高
+              cellRenderer={({ rowIndex, columnIndex, key, style }) => {
+                const item = products[rowIndex]
+                if (!item) return null
+                return (
+                  <div key={key} style={style}>
+                    <Productitem data={item} />
+                  </div>
+                )
+              }}
+            />
+          )
+        }}
+      </AutoSizer>
     </div>
   )
 }
