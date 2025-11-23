@@ -18,8 +18,8 @@ export default function PagingCom() {
         <Pagination
           styles={{
             root: {
-              marginTop: '24px',
-              marginBottom: '32px',
+              marginTop: '32px',
+              marginBottom: '24px',
             },
           }}
           total={total}

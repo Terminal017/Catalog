@@ -8,12 +8,14 @@ import SearchCom from './components/SearchCom'
 function App() {
   return (
     <>
-      <main className="flex flex-col gap-4 p-1">
-        <SearchCom />
-        <FilterBar />
-        <ProductList />
+      <div className="flex flex-col p-1 justify-between min-h-screen">
+        <main className="flex flex-col">
+          <SearchCom />
+          <FilterBar />
+          <ProductList />
+        </main>
         <PagingCom />
-      </main>
+      </div>
     </>
   )
 }

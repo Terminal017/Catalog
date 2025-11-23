@@ -37,6 +37,8 @@ export default function SearchCom() {
         }}
       />
       <Button
+        color="default"
+        variant="filled"
         onClick={() => {
           const send_word = searchContent.trim()
           if (send_word !== keywordRef.current) {
