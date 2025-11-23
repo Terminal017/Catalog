@@ -6,6 +6,54 @@ export const createAppSlice = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
 })
 
+//从localStorage获取初始筛选条件，没有则使用默认的初始状态
+function InitialQueryOptions(): queryOptionsType {
+  try {
+    const localData = JSON.parse(localStorage.getItem('queryOptions') || '{}')
+    return {
+      querySelector: {
+        category: localData.querySelector?.category || [],
+        priceRange: localData.querySelector?.priceRange || {
+          min: null,
+          max: null,
+        },
+        salesRange: localData.querySelector?.salesRange || {
+          min: null,
+          max: null,
+        },
+        ratingRange: localData.querySelector?.ratingRange || {
+          min: null,
+          max: null,
+        },
+        keyword: localData.querySelector?.keyword || '',
+      },
+      sortOption: localData.sortOption || 'default',
+      pageOption: localData.pageOption || {
+        currentPage: 1,
+        pageSize: 10,
+      },
+    }
+  } catch (err) {
+    console.log('localStorage解析发生错误')
+    return {
+      querySelector: {
+        category: [],
+        priceRange: { min: null, max: null },
+        salesRange: { min: null, max: null },
+        ratingRange: { min: null, max: null },
+        keyword: '',
+      },
+      sortOption: 'default',
+      pageOption: {
+        currentPage: 1,
+        pageSize: 10,
+      },
+    }
+  }
+}
+
+const queryOptions = InitialQueryOptions()
+
 //创建关联商品的切片
 export const productsSlice = createAppSlice({
   name: 'products',
@@ -14,19 +62,9 @@ export const productsSlice = createAppSlice({
     recommendProducts: [], //推荐商品数据
     total: 0, //商品总数
     loading: false,
-    querySelector: {
-      //筛选条件：分类，价格区间，销量区间，评分区间
-      category: [],
-      priceRange: { min: null, max: null }, // 范围 0-10000
-      salesRange: { min: null, max: null }, // 范围 0-100000
-      ratingRange: { min: null, max: null }, // 范围 0-5
-      keyword: '',
-    },
-    sortOption: 'default',
-    pageOption: {
-      currentPage: 1,
-      pageSize: 10,
-    },
+    querySelector: queryOptions.querySelector,
+    sortOption: queryOptions.sortOption,
+    pageOption: queryOptions.pageOption,
   } as {
     products: ProductItemType[]
     recommendProducts: ProductItemType[]
@@ -115,6 +153,16 @@ export const productsSlice = createAppSlice({
           const result = paginateProject(sorted, state.pageOption)
 
           state.products = result
+
+          // 将当前筛选条件保存到localStorage
+          localStorage.setItem(
+            'queryOptions',
+            JSON.stringify({
+              querySelector: state.querySelector,
+              sortOption: state.sortOption,
+              pageOption: state.pageOption,
+            }),
+          )
         },
 
         rejected: (state) => {

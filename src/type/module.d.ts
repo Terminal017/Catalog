@@ -31,3 +31,9 @@ interface PaginateOptionType {
   currentPage: number
   pageSize: number
 }
+
+interface queryOptionsType {
+  querySelector: querySelectorType
+  sortOption: sortOptionType
+  pageOption: PaginateOptionType
+}
