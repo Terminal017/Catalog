@@ -1,7 +1,11 @@
 import { Row, Col, Image, Skeleton, Button } from 'antd'
 import { useAppDispatch, useAppSelector } from '../app/hook'
 import { useEffect } from 'react'
-import { fetchProducts, setbookmarks } from '../features/getProduct'
+import {
+  fetchProducts,
+  setbookmarks,
+  resetFilter,
+} from '../features/getProduct'
 import { AutoSizer, Grid } from 'react-virtualized'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 
@@ -16,6 +20,7 @@ export default function ProductList() {
   const sortOption = useAppSelector((state) => state.products.sortOption)
   const pageOption = useAppSelector((state) => state.products.pageOption)
   const loading = useAppSelector((state) => state.products.loading)
+  const error = useAppSelector((state) => state.products.error)
   //为useDispatch添加类型定义
   const dispatch = useAppDispatch()
 
@@ -26,6 +31,21 @@ export default function ProductList() {
   useEffect(() => {
     dispatch(fetchProducts())
   }, [querySelector, sortOption, pageOption])
+
+  //发生错误时添加重新请求按钮
+  if (error) {
+    return (
+      <div className="my-8 flex justify-center">
+        <Button
+          onClick={() => dispatch(fetchProducts())}
+          color="default"
+          variant="filled"
+        >
+          重试
+        </Button>
+      </div>
+    )
+  }
 
   //加载状态显示骨架
   if (loading) {
@@ -46,7 +66,29 @@ export default function ProductList() {
       </div>
     )
   } else {
-    if (products.length <= VIRTUAL_THRESHOLD) {
+    //没有商品时返回的信息
+    if (products.length === 0) {
+      return (
+        <>
+          <h3 className="text-xl mx-2 mb-0!">全部商品</h3>
+          <div className="flex flex-col justify-center items-center mt-12">
+            <p className="text-xl font-medium">{'没有符合条件的商品 (>_<)'}</p>
+            <Button
+              styles={{
+                root: {
+                  fontSize: 18,
+                },
+              }}
+              color="primary"
+              variant="filled"
+              onClick={() => dispatch(resetFilter())}
+            >
+              重置试试
+            </Button>
+          </div>
+        </>
+      )
+    } else if (products.length <= VIRTUAL_THRESHOLD) {
       //正常列表
       return (
         <>

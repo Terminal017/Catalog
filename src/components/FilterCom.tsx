@@ -49,6 +49,22 @@ export function FilterProjects() {
     setRating({ min: null, max: null })
   }
 
+  //同步所有状态
+  const handleSync = () => {
+    setPrice({
+      min: querySelector.priceRange.min,
+      max: querySelector.priceRange.max,
+    })
+    setSales({
+      min: querySelector.salesRange.min,
+      max: querySelector.salesRange.max,
+    })
+    setRating({
+      min: querySelector.ratingRange.min,
+      max: querySelector.ratingRange.max,
+    })
+  }
+
   //获取分类筛选数组
   function handleCategory(tag: string, checked: boolean) {
     const new_category = checked
@@ -131,7 +147,14 @@ export function FilterProjects() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} color="default" variant="filled">
+      <Button
+        onClick={() => {
+          handleSync()
+          setOpen(true)
+        }}
+        color="default"
+        variant="filled"
+      >
         筛选
       </Button>
 

@@ -63,6 +63,7 @@ export const productsSlice = createAppSlice({
     bookmarks: [], //收藏商品数据
     total: 0, //商品总数
     loading: false,
+    error: null,
     querySelector: queryOptions.querySelector,
     sortOption: queryOptions.sortOption,
     pageOption: queryOptions.pageOption,
@@ -72,6 +73,7 @@ export const productsSlice = createAppSlice({
     bookmarks: string[]
     total: number
     loading: boolean
+    error: null | string
     querySelector: querySelectorType
     sortOption: sortOptionType
     pageOption: PaginateOptionType
@@ -125,7 +127,6 @@ export const productsSlice = createAppSlice({
     fetchProducts: create.asyncThunk(
       async () => {
         const res = await axios.get('/api/products')
-        console.log('获取到新的数据/=-=/')
         return res.data.data as ProductItemType[]
       },
       //获取fetch商品信息的状态
@@ -159,9 +160,13 @@ export const productsSlice = createAppSlice({
           state.total = filtered.length
           // 执行排序
           const sorted = sortProject(filtered, state.sortOption)
-
+          // 执行分页
           const result = paginateProject(sorted, state.pageOption)
 
+          // 清除错误信息并登记结果
+          if (state.error) {
+            state.error = null
+          }
           state.products = result
 
           // 将当前筛选条件保存到localStorage
@@ -175,8 +180,10 @@ export const productsSlice = createAppSlice({
           )
         },
 
-        rejected: (state) => {
+        rejected: (state, action) => {
           state.loading = false
+          //添加错误信息
+          state.error = action.error.message || '请求失败'
         },
       },
     ),
