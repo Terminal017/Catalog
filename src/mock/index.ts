@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 import products from './products.json'
 
 Mock.setup({
-  timeout: '1000-3000',
+  timeout: '300-600',
 })
 
 // 模拟fetch请求，返回商品数据

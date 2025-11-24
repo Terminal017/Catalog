@@ -38,7 +38,7 @@ function App() {
     >
       <div className="flex flex-col p-1 justify-between min-h-screen md:px-8">
         <HeaderCom isDark={isDark} setIsDark={setIsDark} />
-        <main className="flex flex-col">
+        <main className="flex flex-col grow">
           <SearchCom />
           <FilterBar />
           <RecommendCom />
