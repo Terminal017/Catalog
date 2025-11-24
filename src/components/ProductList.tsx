@@ -130,8 +130,8 @@ export function Productitem({ data }: { data: ProductItemType }) {
   return (
     <div
       className="flex flex-row gap-4 border-2 border-transparent 
-     rounded-lg hover:border-blue-300 hover:scale-101 bg-gray-50 p-3
-     hover:shadow-lg transition-all duration-200 ease-out relative
+     rounded-lg hover:border-blue-300 hover:scale-101 bg-gray-50 dark:bg-gray-900
+     p-3 hover:shadow-lg transition-all duration-200 ease-out relative
      md:flex-col md:items-center min-w-54"
     >
       <Image
@@ -167,7 +167,10 @@ function SkeletonCard() {
   const screens = getScreen()
 
   return (
-    <div className="flex flex-row gap-4 rounded-lg bg-gray-50 p-3 md:flex-col">
+    <div
+      className="flex flex-row gap-4 rounded-lg bg-gray-50 dark:bg-gray-900 
+    p-3 md:flex-col"
+    >
       <div className="flex justify-center">
         <Skeleton.Image
           active

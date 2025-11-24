@@ -1,12 +1,14 @@
 @import 'tailwindcss';
 
 /*深浅模式全局定义*/
+@custom-variant dark (&:where(.dark, .dark *));
+
 html {
   background-color: white;
   color: black;
 }
 
-.dark html {
+html.dark {
   background-color: #0d0d0d;
   color: #f1f1f1;
 }

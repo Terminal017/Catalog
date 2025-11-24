@@ -20,7 +20,7 @@ export default function RecommendCom() {
       <section className="mx-2 mt-4 mb-8">
         <h3 className="text-xl">猜你喜欢</h3>
         <div className="overflow-x-auto">
-          <div className="flex gap-4 px-4 py-2 rounded-lg bg-[#f5f8ff]">
+          <div className="flex gap-4 px-4 py-2 rounded-lg bg-[#f5f8ff] dark:bg-gray-800">
             {recommendProducts.map((item) => (
               <Productitem data={item} />
             ))}
@@ -37,12 +37,10 @@ export default function RecommendCom() {
         autoplay
         autoplaySpeed={5000}
         draggable
+        className="bg-[#f5f8ff] dark:bg-gray-800 border border-[#e0e7ff] 
+        rounded-lg dark:border-gray-700"
         style={{
           padding: '12px 24px 24px 24px',
-          border: '1px solid #e0e7ff',
-          background: '#f5f8ff',
-          borderRadius: 12,
-          color: '#333333',
           boxShadow: '0 4px 12px -3px rgba(0,0,0,0.08)',
         }}
       >
