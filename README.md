@@ -1,15 +1,15 @@
-### 项目概述
+## 项目概述
 
 该项目是一个基于 React 19 + TypeScript + Vite 的电商平台商品列表页，结合 Ant Design、Tailwind CSS、Redux Toolkit、Mock.js、react-virtualized 等技术栈，实现基本的筛选、排序、分类、响应式
 深浅模式等功能。
 
-### 运行环境
+## 运行环境
 
 - Node.js ≥ 18
 - 包管理器 npm 9+（或 pnpm / yarn）
 - 浏览器 现代浏览器 (Chrome/Edge/Firefox 最新版)
 
-### 运行指南
+## 运行指南
 
 1. 克隆仓库
 
@@ -44,7 +44,11 @@ npm run preview
 
 6. 修改模拟数据：更改[add_products.mjs](https://github.com/Terminal017/Catalog/blob/main/src/mock/add_products.mjs)文件的值并运行。
 
-### 目录结构
+```
+const products = Array.from({ length: 1000 }, () => ({}))  //修改这一项值
+```
+
+## 目录结构
 
 ```
 src/
@@ -61,7 +65,7 @@ src/
 ├─ type/                  # TypeScript 类型定义与接口模型
 ```
 
-### 技术方案
+## 技术方案
 
 整体设计：
 
@@ -90,7 +94,7 @@ export const productsSlice = createAppSlice({
 })
 ```
 
-### 难点分析
+## 难点分析
 
 1、设计筛选、排序、分页、搜索、收藏等多项功能的状态管理，顺序为获取数据->筛选->（排序）->分页。
 
