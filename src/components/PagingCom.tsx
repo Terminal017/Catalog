@@ -18,7 +18,7 @@ export default function PagingCom() {
         <Pagination
           styles={{
             root: {
-              marginTop: '32px',
+              marginTop: '36px',
               marginBottom: '24px',
             },
           }}

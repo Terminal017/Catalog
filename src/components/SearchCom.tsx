@@ -64,7 +64,7 @@ export default function SearchCom() {
   }, [searchContent, dispatch])
 
   return (
-    <div className="w-full p-2 flex flex-row gap-2">
+    <div className="w-full p-2 flex flex-row gap-2 mx-auto md:max-w-4/5 lg:max-w-3/5">
       <Dropdown
         open={open}
         menu={{

@@ -9,7 +9,7 @@ import RecommendCom from './components/Recommend.tsx'
 function App() {
   return (
     <>
-      <div className="flex flex-col p-1 justify-between min-h-screen">
+      <div className="flex flex-col p-1 justify-between min-h-screen md:px-8">
         <main className="flex flex-col">
           <SearchCom />
           <FilterBar />

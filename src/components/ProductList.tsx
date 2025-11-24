@@ -8,6 +8,7 @@ import {
 } from '../features/getProduct'
 import { AutoSizer, Grid } from 'react-virtualized'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
+import { getScreen } from '../lib/getScreen'
 
 //商品列表组件
 export default function ProductList() {
@@ -56,7 +57,7 @@ export default function ProductList() {
           {Array.from({ length: Math.min(pageOption.pageSize, 20) }).map(
             (_, index) => {
               return (
-                <Col span={24} key={index}>
+                <Col xs={24} md={8} lg={6} xl={{ flex: '0 0 20%' }} key={index}>
                   <SkeletonCard />
                 </Col>
               )
@@ -96,7 +97,13 @@ export default function ProductList() {
           <Row gutter={[16, 16]} style={{ marginTop: 16, marginInline: 0 }}>
             {products.map((item) => {
               return (
-                <Col span={24} key={item.id}>
+                <Col
+                  xs={24}
+                  md={8}
+                  lg={6}
+                  xl={{ flex: '0 0 20%' }}
+                  key={item.id}
+                >
                   <Productitem data={item} />
                 </Col>
               )
@@ -117,14 +124,15 @@ export default function ProductList() {
 }
 
 //单个商品组件
-function Productitem({ data }: { data: ProductItemType }) {
+export function Productitem({ data }: { data: ProductItemType }) {
   const dispatch = useAppDispatch()
   const bookmarks = useAppSelector((state) => state.products.bookmarks)
   return (
     <div
-      className="flex flex-row gap-4 border-[1.5px] border-transparent 
+      className="flex flex-row gap-4 border-2 border-transparent 
      rounded-lg hover:border-blue-300 hover:scale-101 bg-gray-50 p-3
-     hover:shadow-lg transition-all duration-200 ease-out relative"
+     hover:shadow-lg transition-all duration-200 ease-out relative
+     md:flex-col md:items-center min-w-54"
     >
       <Image
         width={120}
@@ -145,13 +153,7 @@ function Productitem({ data }: { data: ProductItemType }) {
         }
         color="primary"
         variant="filled"
-        styles={{
-          root: {
-            position: 'absolute',
-            bottom: 12,
-            right: 24,
-          },
-        }}
+        className="absolute! bottom-3 right-3"
         onClick={() => {
           dispatch(setbookmarks(data.id))
         }}
@@ -161,17 +163,27 @@ function Productitem({ data }: { data: ProductItemType }) {
 }
 
 function SkeletonCard() {
+  //获取屏幕信息
+  const screens = getScreen()
+
   return (
-    <div className="flex gap-4 rounded-lg bg-gray-50 p-3">
-      <Skeleton.Image
-        active
-        style={{ width: 120, height: 120, borderRadius: 8 }}
-      />
+    <div className="flex flex-row gap-4 rounded-lg bg-gray-50 p-3 md:flex-col">
+      <div className="flex justify-center">
+        <Skeleton.Image
+          active
+          style={{ width: 120, height: 120, borderRadius: 8 }}
+        />
+      </div>
       <div className="flex-1 flex flex-col justify-center">
         <Skeleton
           active
-          title={{ width: '60%' }}
-          paragraph={{ rows: 3, width: ['40%', '48%', '55%'] }}
+          title={{ width: screens.md ? '100%' : '65%' }}
+          paragraph={{
+            rows: 3,
+            width: screens.md
+              ? ['100%', '100%', '100%']
+              : ['40%', '50%', '60%'],
+          }}
         />
       </div>
     </div>
@@ -179,6 +191,7 @@ function SkeletonCard() {
 }
 
 function VirtualList() {
+  const screens = getScreen()
   const products = useAppSelector(
     (state) => state.products.products,
   ) as ProductItemType[]
@@ -187,21 +200,38 @@ function VirtualList() {
     <div style={{ height: 'calc(100vh - 226px)', marginTop: 16 }}>
       <AutoSizer>
         {({ width, height }) => {
-          const columnCount = 1 // 计算总列数，移动端为1行
-          const rowCount = products.length // 计算总行数
+          let columnCount = 1 // 计算总列数，移动端为1行
+
+          if (screens.xl) {
+            columnCount = 5 // xl: ≥1200px, 5列
+          } else if (screens.lg) {
+            columnCount = 4 // lg: ≥992px, 4列
+          } else if (screens.md) {
+            columnCount = 3 // md: ≥768px, 3列
+          }
+          const columnWidth = width / columnCount
+          const rowCount = Math.ceil(products.length / columnCount) // 计算总行数
+          const rowHeight = screens.md ? 300 : 160
           return (
             <Grid
               width={width}
               height={height}
               columnCount={columnCount}
-              columnWidth={width} // 一列占满全部宽度
+              columnWidth={columnWidth} // 宽度
               rowCount={rowCount}
-              rowHeight={160} // 固定行高
+              rowHeight={rowHeight} // 行高
               cellRenderer={({ rowIndex, columnIndex, key, style }) => {
-                const item = products[rowIndex]
+                const index = rowIndex * columnCount + columnIndex
+                const item = products[index]
                 if (!item) return null
                 return (
-                  <div key={key} style={style}>
+                  <div
+                    key={key}
+                    style={{
+                      ...style,
+                      padding: '8px', // 添加间距
+                    }}
+                  >
                     <Productitem data={item} />
                   </div>
                 )

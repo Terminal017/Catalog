@@ -2,11 +2,14 @@ import { Drawer, Button, Tag, InputNumber } from 'antd'
 import { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '../app/hook'
 import { setFilter, resetFilter } from '../features/getProduct'
+import { getScreen } from '../lib/getScreen'
 
 //筛选组件
 export function FilterProjects() {
   const querySelector = useAppSelector((state) => state.products.querySelector)
   const dispatch = useAppDispatch()
+  //获取屏幕信息
+  const screens = getScreen()
 
   //管理抽屉状态
   const [open, setOpen] = useState(false)
@@ -29,6 +32,9 @@ export function FilterProjects() {
   }>({ min: querySelector.ratingRange.min, max: querySelector.ratingRange.max })
 
   const { CheckableTag } = Tag
+  //根据屏幕大小设置抽屉位置和大小
+  const drawerPlacement = screens.md ? 'left' : 'bottom'
+  const drawerSize = screens.md ? 400 : 680
   const CATEGORIES = [
     { value: 'electronics', label: '数码' },
     { value: 'appliances', label: '家电' },
@@ -160,10 +166,10 @@ export function FilterProjects() {
 
       <Drawer
         title="筛选条件"
-        placement="bottom"
+        placement={drawerPlacement}
         open={open}
         onClose={() => setOpen(false)}
-        size={680}
+        size={drawerSize}
       >
         <h3 className="text-xl">类别</h3>
         <div className="grid grid-cols-3 gap-x-2 gap-y-3 mb-8">

@@ -2,6 +2,8 @@ import { Carousel, Image, Skeleton, Button } from 'antd'
 import { useAppSelector, useAppDispatch } from '../app/hook'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import { setbookmarks } from '../features/getProduct'
+import { Productitem } from './ProductList'
+import { getScreen } from '../lib/getScreen'
 
 export default function RecommendCom() {
   const dispatch = useAppDispatch()
@@ -11,6 +13,22 @@ export default function RecommendCom() {
   const recommendProducts = useAppSelector(
     (state) => state.products.recommendProducts,
   )
+
+  const screens = getScreen()
+  if (screens.md) {
+    return (
+      <section className="mx-2 mt-4 mb-8">
+        <h3 className="text-xl">猜你喜欢</h3>
+        <div className="overflow-x-auto">
+          <div className="flex gap-4 px-4 py-2 rounded-lg bg-[#f5f8ff]">
+            {recommendProducts.map((item) => (
+              <Productitem data={item} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="mx-2 mt-4 mb-8">
