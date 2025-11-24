@@ -9,7 +9,6 @@ export default function PagingCom() {
     (state) => state.products.pageOption.currentPage,
   )
   const pageSize = useAppSelector((state) => state.products.pageOption.pageSize)
-  console.log('total计数===>', total)
   const dispatch = useAppDispatch()
 
   return (

@@ -2,14 +2,14 @@ import { Drawer, Button, Tag, InputNumber } from 'antd'
 import { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '../app/hook'
 import { setFilter, resetFilter } from '../features/getProduct'
-import { getScreen } from '../lib/getScreen'
+import { useScreen } from '../hook/useScreen'
 
 //筛选组件
 export function FilterProjects() {
   const querySelector = useAppSelector((state) => state.products.querySelector)
   const dispatch = useAppDispatch()
   //获取屏幕信息
-  const screens = getScreen()
+  const screens = useScreen()
 
   //管理抽屉状态
   const [open, setOpen] = useState(false)

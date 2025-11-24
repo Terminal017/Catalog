@@ -18,8 +18,6 @@ export function filterProject(
     return value <= (max as number)
   }
 
-  console.log('检查数据：', querySelector.keyword.trim())
-
   return data.filter((item) => {
     // 类别筛选
     if (

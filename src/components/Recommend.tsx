@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from '../app/hook'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import { setbookmarks } from '../features/getProduct'
 import { Productitem } from './ProductList'
-import { getScreen } from '../lib/getScreen'
+import { useScreen } from '../hook/useScreen'
 
 export default function RecommendCom() {
   const dispatch = useAppDispatch()
@@ -14,7 +14,7 @@ export default function RecommendCom() {
     (state) => state.products.recommendProducts,
   )
 
-  const screens = getScreen()
+  const screens = useScreen()
   if (screens.md) {
     return (
       <section className="mx-2 mt-4 mb-8">

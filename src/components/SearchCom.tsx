@@ -27,7 +27,6 @@ export default function SearchCom() {
         history_list = history_list.slice(0, 4)
       }
 
-      console.log('写入数据', history_list)
       localStorage.setItem('searchKeyword', JSON.stringify(history_list))
     } catch {
       const history_list: string[] = [keyword]
@@ -40,7 +39,7 @@ export default function SearchCom() {
     const history_data = localStorage.getItem('searchKeyword') || '[]'
     try {
       const history_list: string[] = JSON.parse(history_data)
-      return history_list.map((item, index) => {
+      return history_list.map((item) => {
         return { key: item, label: item }
       })
     } catch {

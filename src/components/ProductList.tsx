@@ -8,7 +8,7 @@ import {
 } from '../features/getProduct'
 import { AutoSizer, Grid } from 'react-virtualized'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
-import { getScreen } from '../lib/getScreen'
+import { useScreen } from '../hook/useScreen'
 
 //商品列表组件
 export default function ProductList() {
@@ -31,7 +31,7 @@ export default function ProductList() {
   //根据query变化重新获取商品列表
   useEffect(() => {
     dispatch(fetchProducts())
-  }, [querySelector, sortOption, pageOption])
+  }, [querySelector, sortOption, pageOption, dispatch])
 
   //发生错误时添加重新请求按钮
   if (error) {
@@ -164,7 +164,7 @@ export function Productitem({ data }: { data: ProductItemType }) {
 
 function SkeletonCard() {
   //获取屏幕信息
-  const screens = getScreen()
+  const screens = useScreen()
 
   return (
     <div
@@ -194,7 +194,7 @@ function SkeletonCard() {
 }
 
 function VirtualList() {
-  const screens = getScreen()
+  const screens = useScreen()
   const products = useAppSelector(
     (state) => state.products.products,
   ) as ProductItemType[]

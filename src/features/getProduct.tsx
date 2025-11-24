@@ -7,7 +7,7 @@ export const createAppSlice = buildCreateSlice({
 })
 
 //从localStorage获取初始筛选条件，没有则使用默认的初始状态
-function InitialQueryOptions(): queryOptionsType {
+function initialQueryOptions(): queryOptionsType {
   try {
     const localData = JSON.parse(localStorage.getItem('queryOptions') || '{}')
     return {
@@ -33,8 +33,7 @@ function InitialQueryOptions(): queryOptionsType {
         pageSize: 10,
       },
     }
-  } catch (err) {
-    console.log('localStorage解析发生错误')
+  } catch {
     return {
       querySelector: {
         category: [],
@@ -52,7 +51,7 @@ function InitialQueryOptions(): queryOptionsType {
   }
 }
 
-const queryOptions = InitialQueryOptions()
+const queryOptions = initialQueryOptions()
 
 //创建关联商品的切片
 export const productsSlice = createAppSlice({
