@@ -4,6 +4,93 @@ import { useAppSelector, useAppDispatch } from '../app/hook'
 import { setFilter, resetFilter } from '../features/getProduct'
 import { useScreen } from '../hook/useScreen'
 
+type Range = { min: number | null; max: number | null }
+
+// 最小值更新函数（需要时互换）
+function updateMinWithSwap(
+  range: Range,
+  newMin: number | null,
+  onSwap: () => void,
+): Range {
+  if (range.max != null && newMin != null && newMin > range.max) {
+    onSwap()
+    return { min: range.max, max: newMin }
+  }
+  return { ...range, min: newMin }
+}
+
+// 最大值更新函数（需要时互换）
+function updateMaxWithSwap(
+  range: Range,
+  newMax: number | null,
+  onSwap: () => void,
+): Range {
+  if (range.min != null && newMax != null && newMax < range.min) {
+    onSwap()
+    return { min: newMax, max: range.min }
+  }
+  return { ...range, max: newMax }
+}
+
+// 可复用的区间输入组件
+type RangeInputsProps = {
+  minPlaceholder: string
+  maxPlaceholder: string
+  minLimit: number
+  maxLimit: number
+  value: Range
+  onMinChange: (v: number | null) => void
+  onMaxChange: (v: number | null) => void
+  onMinCommit: () => void
+  onMaxCommit: () => void
+}
+
+function RangeInputs({
+  minPlaceholder,
+  maxPlaceholder,
+  minLimit,
+  maxLimit,
+  value,
+  onMinChange,
+  onMaxChange,
+  onMinCommit,
+  onMaxCommit,
+}: RangeInputsProps) {
+  return (
+    <div className="flex flex-row gap-1 items-center mb-6">
+      <InputNumber
+        styles={{
+          root: { width: '100%' },
+          input: { textAlign: 'center', fontSize: '16px' },
+        }}
+        controls={false}
+        placeholder={minPlaceholder}
+        min={minLimit}
+        max={maxLimit}
+        value={value.min}
+        onChange={(value) => onMinChange(value as number | null)}
+        onBlur={onMinCommit}
+        onPressEnter={onMinCommit}
+      />
+      <span className="mx-2">-</span>
+      <InputNumber
+        styles={{
+          root: { width: '100%' },
+          input: { textAlign: 'center', fontSize: '16px' },
+        }}
+        controls={false}
+        placeholder={maxPlaceholder}
+        min={minLimit}
+        max={maxLimit}
+        value={value.max}
+        onChange={(value) => onMaxChange(value as number | null)}
+        onBlur={onMaxCommit}
+        onPressEnter={onMaxCommit}
+      />
+    </div>
+  )
+}
+
 //筛选组件
 export function FilterProjects() {
   const querySelector = useAppSelector((state) => state.products.querySelector)
@@ -83,65 +170,37 @@ export function FilterProjects() {
   //注释疑问：这个函数可以复用吗？
   //更新最低价，当最低价高于最高价时对调
   function hangleMinPrice(min_price: number | null) {
-    if (
-      querySelector.priceRange.max &&
-      min_price &&
-      min_price > querySelector.priceRange.max
-    ) {
-      setPrice((prev) => ({ min: prev.max, max: prev.min }))
-      return {
-        priceRange: { min: querySelector.priceRange.max, max: min_price },
-      }
-    }
-    return { priceRange: { ...querySelector.priceRange, min: min_price } }
+    const next = updateMinWithSwap(querySelector.priceRange, min_price, () =>
+      setPrice((prev) => ({ min: prev.max, max: prev.min })),
+    )
+    return { priceRange: next }
   }
 
   //更新最高价
   function hangleMaxPrice(max_price: number | null) {
-    if (
-      querySelector.priceRange.min &&
-      max_price &&
-      max_price < querySelector.priceRange.min
-    ) {
-      setPrice((prev) => ({ min: prev.max, max: prev.min }))
-      return {
-        priceRange: { min: max_price, max: querySelector.priceRange.min },
-      }
-    }
-    return { priceRange: { ...querySelector.priceRange, max: max_price } }
+    const next = updateMaxWithSwap(querySelector.priceRange, max_price, () =>
+      setPrice((prev) => ({ min: prev.max, max: prev.min })),
+    )
+    return { priceRange: next }
   }
 
   //更新最低销量
   function hangleMinSales(min_sales: number | null) {
-    if (
-      querySelector.salesRange.max &&
-      min_sales &&
-      min_sales > querySelector.salesRange.max
-    ) {
-      setSales((prev) => ({ min: prev.max, max: prev.min }))
-      return {
-        salesRange: { min: querySelector.salesRange.max, max: min_sales },
-      }
-    }
-    return { salesRange: { ...querySelector.salesRange, min: min_sales } }
+    const next = updateMinWithSwap(querySelector.salesRange, min_sales, () =>
+      setSales((prev) => ({ min: prev.max, max: prev.min })),
+    )
+    return { salesRange: next }
   }
 
   //更新最高销量
   function hangleMaxSales(max_sales: number | null) {
-    if (
-      querySelector.salesRange.min &&
-      max_sales &&
-      max_sales < querySelector.salesRange.min
-    ) {
-      setSales((prev) => ({ min: prev.max, max: prev.min }))
-      return {
-        salesRange: { min: max_sales, max: querySelector.salesRange.min },
-      }
-    }
-    return { salesRange: { ...querySelector.salesRange, max: max_sales } }
+    const next = updateMaxWithSwap(querySelector.salesRange, max_sales, () =>
+      setSales((prev) => ({ min: prev.max, max: prev.min })),
+    )
+    return { salesRange: next }
   }
 
-  //更新评分范围
+  //更新评分范围（评分不做互换逻辑，保持原行为）
   function hangleMinRating(min_rating: number | null) {
     return { ratingRange: { ...querySelector.ratingRange, min: min_rating } }
   }
@@ -198,115 +257,43 @@ export function FilterProjects() {
         </div>
 
         <h3 className="text-xl">价格区间</h3>
-        <div className="flex flex-row gap-1 items-center mb-6">
-          <InputNumber
-            styles={{
-              root: { width: '100%' },
-              input: { textAlign: 'center', fontSize: '16px' },
-            }}
-            controls={false}
-            placeholder="最低价"
-            min={0}
-            max={10000}
-            value={price.min}
-            onChange={(value) => setPrice({ ...price, min: value })}
-            onBlur={() => dispatch(setFilter(hangleMinPrice(price.min)))}
-            onPressEnter={() => dispatch(setFilter(hangleMinPrice(price.min)))}
-          />
-          <span className="mx-2">-</span>
-          <InputNumber
-            styles={{
-              root: { width: '100%' },
-              input: { textAlign: 'center', fontSize: '16px' },
-            }}
-            controls={false}
-            placeholder="最高价"
-            min={0}
-            max={10000}
-            value={price.max}
-            onChange={(value) => setPrice({ ...price, max: value })}
-            onBlur={() => dispatch(setFilter(hangleMaxPrice(price.max)))}
-            onPressEnter={() => dispatch(setFilter(hangleMaxPrice(price.max)))}
-          />
-        </div>
+        <RangeInputs
+          minPlaceholder="最低价"
+          maxPlaceholder="最高价"
+          minLimit={0}
+          maxLimit={10000}
+          value={price}
+          onMinChange={(value) => setPrice({ ...price, min: value })}
+          onMaxChange={(value) => setPrice({ ...price, max: value })}
+          onMinCommit={() => dispatch(setFilter(hangleMinPrice(price.min)))}
+          onMaxCommit={() => dispatch(setFilter(hangleMaxPrice(price.max)))}
+        />
 
         <h3 className="text-xl">销售量</h3>
-        <div className="flex flex-row gap-1 items-center mb-6">
-          <InputNumber
-            styles={{
-              root: { width: '100%' },
-              input: { textAlign: 'center', fontSize: '16px' },
-            }}
-            controls={false}
-            placeholder="最低销量"
-            min={0}
-            max={100000}
-            value={sales.min}
-            onChange={(value) =>
-              setSales({ ...sales, min: value as number | null })
-            }
-            onBlur={() => dispatch(setFilter(hangleMinSales(sales.min)))}
-            onPressEnter={() => dispatch(setFilter(hangleMinSales(sales.min)))}
-          />
-          <span className="mx-2">-</span>
-          <InputNumber
-            styles={{
-              root: { width: '100%' },
-              input: { textAlign: 'center', fontSize: '16px' },
-            }}
-            controls={false}
-            placeholder="最高销量"
-            min={0}
-            max={100000}
-            value={sales.max}
-            onChange={(value) =>
-              setSales({ ...sales, max: value as number | null })
-            }
-            onBlur={() => dispatch(setFilter(hangleMaxSales(sales.max)))}
-            onPressEnter={() => dispatch(setFilter(hangleMaxSales(sales.max)))}
-          />
-        </div>
+        <RangeInputs
+          minPlaceholder="最低销量"
+          maxPlaceholder="最高销量"
+          minLimit={0}
+          maxLimit={100000}
+          value={sales}
+          onMinChange={(value) => setSales({ ...sales, min: value })}
+          onMaxChange={(value) => setSales({ ...sales, max: value })}
+          onMinCommit={() => dispatch(setFilter(hangleMinSales(sales.min)))}
+          onMaxCommit={() => dispatch(setFilter(hangleMaxSales(sales.max)))}
+        />
 
         <h3 className="text-xl">评分</h3>
-        <div className="flex flex-row gap-1 items-center mb-6">
-          <InputNumber
-            styles={{
-              root: { width: '100%' },
-              input: { textAlign: 'center', fontSize: '16px' },
-            }}
-            controls={false}
-            placeholder="最低评分"
-            min={0}
-            max={5}
-            value={rating.min}
-            onChange={(value) =>
-              setRating({ ...rating, min: value as number | null })
-            }
-            onBlur={() => dispatch(setFilter(hangleMinRating(rating.min)))}
-            onPressEnter={() =>
-              dispatch(setFilter(hangleMinRating(rating.min)))
-            }
-          />
-          <span className="mx-2">-</span>
-          <InputNumber
-            styles={{
-              root: { width: '100%' },
-              input: { textAlign: 'center', fontSize: '16px' },
-            }}
-            controls={false}
-            placeholder="最高评分"
-            min={0}
-            max={5}
-            value={rating.max}
-            onChange={(value) =>
-              setRating({ ...rating, max: value as number | null })
-            }
-            onBlur={() => dispatch(setFilter(hangleMaxRating(rating.max)))}
-            onPressEnter={() =>
-              dispatch(setFilter(hangleMaxRating(rating.max)))
-            }
-          />
-        </div>
+        <RangeInputs
+          minPlaceholder="最低评分"
+          maxPlaceholder="最高评分"
+          minLimit={0}
+          maxLimit={5}
+          value={rating}
+          onMinChange={(value) => setRating({ ...rating, min: value })}
+          onMaxChange={(value) => setRating({ ...rating, max: value })}
+          onMinCommit={() => dispatch(setFilter(hangleMinRating(rating.min)))}
+          onMaxCommit={() => dispatch(setFilter(hangleMaxRating(rating.max)))}
+        />
 
         <div className="flex flex-row gap-4 justify-around mt-12">
           <Button

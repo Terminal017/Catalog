@@ -2,6 +2,7 @@ import { Button } from 'antd'
 import { StarOutlined } from '@ant-design/icons'
 import { useAppSelector } from '../app/hook'
 
+//收藏夹组件
 export default function Bookmarks() {
   const bookmarks = useAppSelector((state) => state.products.bookmarks)
   return (
